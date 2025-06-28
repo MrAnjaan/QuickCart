@@ -22,7 +22,8 @@ const ProductList = () => {
         try {
             setLoading(true);
             const products = await fetchProducts(newSkip);
-            setProductList(products)
+            console.log(products);
+            setProductList((prev) => [...prev, ...products])
             dispatch(AddProds(products));
         }
         catch (err) {
@@ -36,6 +37,7 @@ const ProductList = () => {
     }
 
     useEffect(() => {
+        // debugger;
         if (storedProds.length != 0) {
             setProductList(storedProds);
         } else {
@@ -44,28 +46,36 @@ const ProductList = () => {
             API(skip);
 
         }
+
+    }, [])
+
+    useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [])
 
     const handleScroll = () => {
+        // debugger;
         const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-
-        if (scrollTop + clientHeight >= scrollHeight - 5) {
+        if (scrollTop + clientHeight >= scrollHeight - 5 && !loading) {
             console.log("Reached end of the screen");
-            setLoading(true);
             setSkip(prevSkip => {
                 const newSkip = prevSkip + 10;
+                console.log("inside scroll", newSkip);
                 API(newSkip);
                 return newSkip;
             });
-            setTimeout(() => { setLoading(false) }, 2000)
+            // debugger;
+            console.log('skip', skip);
+            // setSkip(skip + 10);
+            // API(skip)
+            // setTimeout(() => { setLoading(false) }, 2000)
 
 
         }
     };
 
-    useEffect(() => { setProductList(storedProds) }, [storedProds])
+    // useEffect(() => { setProductList(storedProds) }, [storedProds])
 
 
     return (
